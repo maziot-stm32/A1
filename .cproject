@@ -39,6 +39,7 @@
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths.1043968340" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="../MAZ_Applications"/>
+									<listOptionValue builtIn="false" value="../MAZ_Common"/>
 									<listOptionValue builtIn="false" value="../MAZ_Drivers"/>
 									<listOptionValue builtIn="false" value="../MAZ_Modules"/>
 									<listOptionValue builtIn="false" value="../MAZ_Vendors"/>
