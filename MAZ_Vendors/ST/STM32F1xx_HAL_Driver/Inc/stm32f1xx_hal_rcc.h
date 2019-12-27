@@ -26,7 +26,7 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include <stm32f1xx_hal_def.h>
+#include "stm32f1xx_hal_def.h"
 
 
 /** @addtogroup STM32F1xx_HAL_Driver
@@ -1141,7 +1141,7 @@ typedef struct
   */
 
 /* Include RCC HAL Extension module */
-#include <stm32f1xx_hal_rcc_ex.h>
+#include "stm32f1xx_hal_rcc_ex.h"
 
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup RCC_Exported_Functions
