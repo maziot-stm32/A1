@@ -1,5 +1,5 @@
 /*
- * MAZ_Com_product.h
+ * maz_com_product.h
  *
  *  Created on: 2019年12月27日
  *      Author: Paul@maziot.com

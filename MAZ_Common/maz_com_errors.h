@@ -1,5 +1,5 @@
 /*
- * MAZ_Com_errors.h
+ * maz_com_errors.h
  *
  *  Created on: 2019年12月27日
  *      Author: Paul@maziot.com
