@@ -18,12 +18,14 @@ typedef enum _MAZDRV_LED_
     MAZDRV_LED1,
     MAZDRV_LED_MAX,
 } MAZDRV_LED;
+
 #elif defined(MAZ_PRODUCT_A2)
 typedef enum _MAZDRV_LED_
 {
     MAZDRV_LED1 = 0,
     MAZDRV_LED_MAX,
 } MAZDRV_LED;
+
 #endif
 
 typedef enum _MAZDRV_LED_GPIO_PORT_
@@ -81,6 +83,6 @@ typedef struct _MAZDRV_LED_CTRL_
 
 int MAZ_Drv_led_init(void);
 int MAZ_Drv_led_set_status(MAZDRV_LED led, MAZDRV_LED_STATUS status);
-int MAZ_Drv_led_gpio_prot_clk_enable(MAZDRV_LED_GPIO_PORT port);
+int MAZ_Drv_led_gpio_prot_clk_enable(MAZDRV_LED led);
 
 #endif /* MAZ_DRV_LED_H_ */

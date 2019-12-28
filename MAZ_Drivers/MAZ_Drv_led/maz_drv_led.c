@@ -55,7 +55,7 @@ int MAZ_Drv_led_init(void)
     for (led = MAZDRV_LED0; led < MAZDRV_LED_MAX; led++)
     {
         /* GPIO Ports Clock Enable */
-        MAZ_Drv_led_gpio_prot_clk_enable(ctrl[led].port);
+        MAZ_Drv_led_gpio_prot_clk_enable(led);
 
         /* Configure GPIO pin */
         GPIO_InitStruct.Pin = ctrl[led].pin;
@@ -79,6 +79,11 @@ int MAZ_Drv_led_set_status(MAZDRV_LED led, MAZDRV_LED_STATUS status)
 {
     MAZDRV_LED_GPIO_LEVEL level;
     MAZDRV_LED_CTRL *ctrl = NULL;
+
+    if (led < MAZDRV_LED0 || led >= MAZDRV_LED_MAX)
+    {
+        return MAZRET_EINVAL;
+    }
 
     if (status < MAZDRV_LED_STATUS_ON || status > MAZDRV_LED_STATUS_TOGGLE)
     {
@@ -112,12 +117,18 @@ int MAZ_Drv_led_set_status(MAZDRV_LED led, MAZDRV_LED_STATUS status)
  * @brief  MAZ_Drv_led_gpio_prot_clk_enable
  * @retval Error code
  */
-int MAZ_Drv_led_gpio_prot_clk_enable(MAZDRV_LED_GPIO_PORT port)
+int MAZ_Drv_led_gpio_prot_clk_enable(MAZDRV_LED led)
 {
-    if (port < MAZDRV_LED_GPIO_PORTA || port > MAZDRV_LED_GPIO_PORTG)
+    MAZDRV_LED_GPIO_PORT port;
+    MAZDRV_LED_CTRL *ctrl = NULL;
+
+    if (led < MAZDRV_LED0 || led >= MAZDRV_LED_MAX)
     {
         return MAZRET_EINVAL;
     }
+
+    ctrl = g_mazdrv_led_ctrl;
+    port = ctrl[led].port;
 
     /* GPIO Ports Clock Enable */
     switch (port)
