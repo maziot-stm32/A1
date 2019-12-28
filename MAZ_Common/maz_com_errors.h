@@ -48,5 +48,6 @@
 #define MAZRET_ERANGE       34      /* Math result not representable */
 
 /* Maziot custom return value */
+#define MAZRET_ETSKCREATE   35      /* Task create failed */
 
 #endif /* MAZ_COM_ERRORS_H_ */
