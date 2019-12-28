@@ -19,47 +19,13 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "maz_com_errors.h"
+#include "maz_drv_led.h"
 
 static TaskHandle_t MAZ_App_led_tsk_handle = NULL;
 static void MAZ_App_led_task(void *pvParameters);
 
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-
-#define LED0_Pin        GPIO_PIN_8
-#define LED0_GPIO_Port  GPIOA
-#define LED1_Pin        GPIO_PIN_2
-#define LED1_GPIO_Port  GPIOD
-
-#define LED_ON          GPIO_PIN_RESET
-#define LED_OFF         GPIO_PIN_SET
-
-/**
- * @brief  Init led
- * @retval None
- */
-void led_init(void)
-{
-    GPIO_InitTypeDef GPIO_InitStruct = { 0 };
-
-    /* GPIO Ports Clock Enable */
-    __HAL_RCC_GPIOD_CLK_ENABLE();
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-
-    /*Configure GPIO pin : LED0_Pin */
-    GPIO_InitStruct.Pin = LED0_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(LED0_GPIO_Port, &GPIO_InitStruct);
-
-    /*Configure GPIO pin : LED1_Pin */
-    GPIO_InitStruct.Pin = LED1_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(LED1_GPIO_Port, &GPIO_InitStruct);
-}
 
 /**
  * @brief  The application entry point.
@@ -70,7 +36,7 @@ int main(void)
     HAL_Init();
     SystemClock_Config();
     MX_GPIO_Init();
-    led_init();
+    MAZ_Drv_led_init();
 
     BaseType_t xReturn = pdPASS;
     xReturn = xTaskCreate((TaskFunction_t) MAZ_App_led_task,
@@ -87,12 +53,9 @@ static void MAZ_App_led_task(void *parameter)
 {
     while (1)
     {
-        HAL_GPIO_WritePin(LED0_GPIO_Port, LED0_Pin, LED_ON);
-        HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, LED_ON);
-        vTaskDelay(200);
-        HAL_GPIO_WritePin(LED0_GPIO_Port, LED0_Pin, LED_OFF);
-        HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, LED_OFF);
-        vTaskDelay(200);
+        MAZ_Drv_led_set_status(MAZDRV_LED0, MAZDRV_LED_STATUS_TOGGLE);
+        MAZ_Drv_led_set_status(MAZDRV_LED1, MAZDRV_LED_STATUS_ON);
+        vTaskDelay(500);
     }
 }
 
