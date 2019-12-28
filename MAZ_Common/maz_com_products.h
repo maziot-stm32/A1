@@ -1,7 +1,7 @@
 /*
  * maz_com_product.h
  *
- *  Created on: 2019年12月27日
+ *  Created on: Dec 27, 2019
  *      Author: Paul@maziot.com
  */
 
