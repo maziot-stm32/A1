@@ -2,7 +2,7 @@
  * MAZ_Com_product.h
  *
  *  Created on: 2019年12月27日
- *      Author: paul@maziot.com
+ *      Author: Paul@maziot.com
  */
 
 #ifndef MAZ_COM_PRODUCT_H_

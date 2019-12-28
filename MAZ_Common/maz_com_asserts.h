@@ -2,11 +2,13 @@
  * maz_com_asserts.h
  *
  *  Created on: 2019年12月27日
- *      Author: Paul
+ *      Author: Paul@maziot.com
  */
 
 #ifndef MAZ_COM_ASSERTS_H_
 #define MAZ_COM_ASSERTS_H_
+
+//#define debug_msg printf
 
 #define MAZASSERT_RETVAL(condition, ret, fmt, msg...)                   \
     if (condition)                                                      \
