@@ -22,7 +22,7 @@ typedef enum _MAZDRV_LED_
 #elif defined(MAZ_PRODUCT_A2)
 typedef enum _MAZDRV_LED_
 {
-    MAZDRV_LED1 = 0,
+    MAZDRV_LED0 = 0,
     MAZDRV_LED_MAX,
 } MAZDRV_LED;
 

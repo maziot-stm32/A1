@@ -27,6 +27,7 @@ static MAZDRV_LED_CTRL g_mazdrv_led_ctrl[MAZDRV_LED_MAX] =
         .status = MAZDRV_LED_STATUS_OFF,
     },
 };
+
 #elif defined(MAZ_PRODUCT_A2)
 static MAZDRV_LED_CTRL g_mazdrv_led_ctrl[MAZDRV_LED_MAX] =
 {
@@ -38,6 +39,7 @@ static MAZDRV_LED_CTRL g_mazdrv_led_ctrl[MAZDRV_LED_MAX] =
          MAZDRV_LED_STATUS_OFF,
     },
 };
+
 #endif
 
 /**
