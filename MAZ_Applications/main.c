@@ -20,6 +20,7 @@
 #include "task.h"
 #include "maz_com_errors.h"
 #include "maz_drv_led.h"
+#include "maz_drv_key.h"
 
 static TaskHandle_t MAZ_App_led_tsk_handle = NULL;
 static void MAZ_App_led_task(void *pvParameters);
@@ -37,6 +38,7 @@ int main(void)
     SystemClock_Config();
     MX_GPIO_Init();
     MAZ_Drv_led_init();
+    MAZ_Drv_key_init();
 
     BaseType_t xReturn = pdPASS;
     xReturn = xTaskCreate((TaskFunction_t) MAZ_App_led_task,
@@ -54,8 +56,8 @@ static void MAZ_App_led_task(void *parameter)
     while (1)
     {
 #if defined(MAZ_PRODUCT_A1)
-        MAZ_Drv_led_set_status(MAZDRV_LED0, MAZDRV_LED_STATUS_TOGGLE);
-        MAZ_Drv_led_set_status(MAZDRV_LED1, MAZDRV_LED_STATUS_TOGGLE);
+//        MAZ_Drv_led_set_status(MAZDRV_LED0, MAZDRV_LED_STATUS_TOGGLE);
+//        MAZ_Drv_led_set_status(MAZDRV_LED1, MAZDRV_LED_STATUS_TOGGLE);
 #elif defined(MAZ_PRODUCT_A2)
         MAZ_Drv_led_set_status(MAZDRV_LED0, MAZDRV_LED_STATUS_TOGGLE);
 #endif

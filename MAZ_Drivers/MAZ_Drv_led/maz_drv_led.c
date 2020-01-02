@@ -5,7 +5,6 @@
  *      Author: Paul@maziot.com
  */
 
-#include <stm32f1xx_hal.h>
 #include <maz_drv_led.h>
 #include <maz_com_errors.h>
 
@@ -14,17 +13,17 @@ static MAZDRV_LED_CTRL g_mazdrv_led_ctrl[MAZDRV_LED_MAX] =
 {
     [MAZDRV_LED0] =
     {
-        .port   = MAZDRV_LED_GPIO_PORTA,
-        .pin    = MAZDRV_LED_GPIO_PIN8,
-        .light  = MAZDRV_LED_GPIO_LEVEL_LOW,
-        .status = MAZDRV_LED_STATUS_OFF,
+        .port       = MAZDRV_GPIO_PORTA,
+        .pin        = MAZDRV_GPIO_PIN8,
+        .polarity   = MAZDRV_LED_POLARITY_LOW,
+        .status     = MAZDRV_LED_STATUS_OFF,
     },
     [MAZDRV_LED1] =
     {
-        .port   = MAZDRV_LED_GPIO_PORTD,
-        .pin    = MAZDRV_LED_GPIO_PIN2,
-        .light  = MAZDRV_LED_GPIO_LEVEL_LOW,
-        .status = MAZDRV_LED_STATUS_OFF,
+        .port       = MAZDRV_GPIO_PORTD,
+        .pin        = MAZDRV_GPIO_PIN2,
+        .polarity   = MAZDRV_LED_POLARITY_LOW,
+        .status     = MAZDRV_LED_STATUS_OFF,
     },
 };
 
@@ -33,9 +32,9 @@ static MAZDRV_LED_CTRL g_mazdrv_led_ctrl[MAZDRV_LED_MAX] =
 {
     [MAZDRV_LED0] =
     {
-         MAZDRV_LED_GPIO_PORTC,
-         MAZDRV_LED_GPIO_PIN13,
-         MAZDRV_LED_GPIO_LEVEL_HIGH,
+         MAZDRV_GPIO_PORTC,
+         MAZDRV_GPIO_PIN13,
+         MAZDRV_LED_POLARITY_HIGH,
          MAZDRV_LED_STATUS_OFF,
     },
 };
@@ -57,13 +56,13 @@ int MAZ_Drv_led_init(void)
     for (led = MAZDRV_LED0; led < MAZDRV_LED_MAX; led++)
     {
         /* GPIO Ports Clock Enable */
-        MAZ_Drv_led_gpio_prot_clk_enable(led);
+        MAZ_Drv_gpio_prot_clk_enable(ctrl[led].port);
 
         /* Configure GPIO pin */
         GPIO_InitStruct.Pin = ctrl[led].pin;
         GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-        GPIO_InitStruct.Pull = (ctrl[led].light == MAZDRV_LED_GPIO_LEVEL_HIGH) ? GPIO_PULLDOWN : GPIO_PULLUP;
+        GPIO_InitStruct.Pull = (ctrl[led].polarity == MAZDRV_LED_POLARITY_HIGH) ? GPIO_PULLDOWN : GPIO_PULLUP;
         HAL_GPIO_Init((GPIO_TypeDef*) ctrl[led].port, &GPIO_InitStruct);
 
         /* Set default status */
@@ -79,7 +78,7 @@ int MAZ_Drv_led_init(void)
  */
 int MAZ_Drv_led_set_status(MAZDRV_LED led, MAZDRV_LED_STATUS status)
 {
-    MAZDRV_LED_GPIO_LEVEL level;
+    MAZDRV_LED_POLARITY polarity;
     MAZDRV_LED_CTRL *ctrl = NULL;
 
     if (led < MAZDRV_LED0 || led >= MAZDRV_LED_MAX)
@@ -97,15 +96,15 @@ int MAZ_Drv_led_set_status(MAZDRV_LED led, MAZDRV_LED_STATUS status)
     switch (status)
     {
         case MAZDRV_LED_STATUS_ON:
-            level = ctrl[led].light;
-            HAL_GPIO_WritePin((GPIO_TypeDef*) ctrl[led].port, ctrl[led].pin, level);
+            polarity = ctrl[led].polarity;
+            HAL_GPIO_WritePin((GPIO_TypeDef*) ctrl[led].port, ctrl[led].pin, polarity);
             break;
         case MAZDRV_LED_STATUS_OFF:
-            if (MAZDRV_LED_GPIO_LEVEL_HIGH == ctrl[led].light)
-                level = MAZDRV_LED_GPIO_LEVEL_LOW;
-            else if (MAZDRV_LED_GPIO_LEVEL_LOW == ctrl[led].light)
-                level = MAZDRV_LED_GPIO_LEVEL_HIGH;
-            HAL_GPIO_WritePin((GPIO_TypeDef*) ctrl[led].port, ctrl[led].pin, level);
+            if (MAZDRV_LED_POLARITY_HIGH == ctrl[led].polarity)
+                polarity = MAZDRV_LED_POLARITY_LOW;
+            else if (MAZDRV_LED_POLARITY_LOW == ctrl[led].polarity)
+                polarity = MAZDRV_LED_POLARITY_HIGH;
+            HAL_GPIO_WritePin((GPIO_TypeDef*) ctrl[led].port, ctrl[led].pin, polarity);
             break;
         case MAZDRV_LED_STATUS_TOGGLE:
             HAL_GPIO_TogglePin((GPIO_TypeDef*) ctrl[led].port, ctrl[led].pin);
@@ -115,49 +114,5 @@ int MAZ_Drv_led_set_status(MAZDRV_LED led, MAZDRV_LED_STATUS status)
     return MAZRET_NOERR;
 }
 
-/**
- * @brief  MAZ_Drv_led_gpio_prot_clk_enable
- * @retval Error code
- */
-int MAZ_Drv_led_gpio_prot_clk_enable(MAZDRV_LED led)
-{
-    MAZDRV_LED_GPIO_PORT port;
-    MAZDRV_LED_CTRL *ctrl = NULL;
 
-    if (led < MAZDRV_LED0 || led >= MAZDRV_LED_MAX)
-    {
-        return MAZRET_EINVAL;
-    }
-
-    ctrl = g_mazdrv_led_ctrl;
-    port = ctrl[led].port;
-
-    /* GPIO Ports Clock Enable */
-    switch (port)
-    {
-        case MAZDRV_LED_GPIO_PORTA:
-            __HAL_RCC_GPIOA_CLK_ENABLE();
-            break;
-        case MAZDRV_LED_GPIO_PORTB:
-            __HAL_RCC_GPIOB_CLK_ENABLE();
-            break;
-        case MAZDRV_LED_GPIO_PORTC:
-            __HAL_RCC_GPIOC_CLK_ENABLE();
-            break;
-        case MAZDRV_LED_GPIO_PORTD:
-            __HAL_RCC_GPIOD_CLK_ENABLE();
-            break;
-        case MAZDRV_LED_GPIO_PORTE:
-            __HAL_RCC_GPIOE_CLK_ENABLE();
-            break;
-        case MAZDRV_LED_GPIO_PORTF:
-            __HAL_RCC_GPIOF_CLK_ENABLE();
-            break;
-        case MAZDRV_LED_GPIO_PORTG:
-            __HAL_RCC_GPIOG_CLK_ENABLE();
-            break;
-    }
-
-    return MAZRET_NOERR;
-}
 
