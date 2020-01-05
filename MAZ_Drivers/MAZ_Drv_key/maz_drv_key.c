@@ -10,6 +10,10 @@
 #include <maz_drv_led.h>
 #include <maz_drv_exti.h>
 
+void MAZ_Drv_key0_handle(void);
+void MAZ_Drv_key1_handle(void);
+void MAZ_Drv_key2_handle(void);
+
 static MAZDRV_KEY_CTRL g_mazdrv_key_ctrl[MAZDRV_KEY_MAX] =
 {
     [MAZDRV_KEY0] =
@@ -18,7 +22,7 @@ static MAZDRV_KEY_CTRL g_mazdrv_key_ctrl[MAZDRV_KEY_MAX] =
         .pin        = MAZDRV_GPIO_PIN1,
         .polarity   = MAZDRV_KEY_POLARITY_LOW,
         .mode       = MAZDRV_KEY_INTERRUPT,
-        .handle     = NULL,
+        .handle     = MAZ_Drv_key0_handle,
     },
     [MAZDRV_KEY1] =
     {
@@ -26,7 +30,7 @@ static MAZDRV_KEY_CTRL g_mazdrv_key_ctrl[MAZDRV_KEY_MAX] =
         .pin        = MAZDRV_GPIO_PIN13,
         .polarity   = MAZDRV_KEY_POLARITY_LOW,
         .mode       = MAZDRV_KEY_INTERRUPT,
-        .handle     = NULL,
+        .handle     = MAZ_Drv_key1_handle,
     },
     [MAZDRV_KEY2] =
     {
@@ -34,9 +38,38 @@ static MAZDRV_KEY_CTRL g_mazdrv_key_ctrl[MAZDRV_KEY_MAX] =
         .pin        = MAZDRV_GPIO_PIN0,
         .polarity   = MAZDRV_KEY_POLARITY_HIGH,
         .mode       = MAZDRV_KEY_INTERRUPT,
-        .handle     = NULL,
+        .handle     = MAZ_Drv_key2_handle,
     },
 };
+
+/* Interrupt handler */
+void MAZ_Drv_key0_handle(void)
+{
+    if (__HAL_GPIO_EXTI_GET_IT(GPIO_PIN_1) != 0x00u)
+    {
+        MAZ_Drv_led_set_status(MAZDRV_LED0, MAZDRV_LED_STATUS_TOGGLE);
+        __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_1);
+    }
+}
+
+void MAZ_Drv_key1_handle(void)
+{
+    if (__HAL_GPIO_EXTI_GET_IT(GPIO_PIN_13) != 0x00u)
+    {
+        MAZ_Drv_led_set_status(MAZDRV_LED1, MAZDRV_LED_STATUS_TOGGLE);
+        __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_13);
+    }
+}
+
+void MAZ_Drv_key2_handle(void)
+{
+    if (__HAL_GPIO_EXTI_GET_IT(GPIO_PIN_0) != 0x00u)
+    {
+        MAZ_Drv_led_set_status(MAZDRV_LED0, MAZDRV_LED_STATUS_TOGGLE);
+        MAZ_Drv_led_set_status(MAZDRV_LED1, MAZDRV_LED_STATUS_TOGGLE);
+        __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_0);
+    }
+}
 
 int MAZ_Drv_key_init(void)
 {
@@ -67,50 +100,9 @@ int MAZ_Drv_key_init(void)
 
         if(MAZDRV_KEY_INTERRUPT == ctrl[key].mode)
         {
-            MAZ_Drv_exti_irq_enable(ctrl[key].pin);
+            MAZ_Drv_exti_irq_enable(ctrl[key].pin, ctrl[key].handle);
         }
     }
 
     return MAZRET_NOERR;
-
-}
-
-/**
- * @brief This function handles EXTI line0 interrupt.
- */
-void EXTI0_IRQHandler(void)
-{
-    // KEY_UP 按下
-    if (__HAL_GPIO_EXTI_GET_IT(GPIO_PIN_0) != 0x00u)
-    {
-        MAZ_Drv_led_set_status(MAZDRV_LED0, MAZDRV_LED_STATUS_TOGGLE);
-        MAZ_Drv_led_set_status(MAZDRV_LED1, MAZDRV_LED_STATUS_TOGGLE);
-        __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_0);
-    }
-}
-
-/**
- * @brief This function handles EXTI line1 interrupt.
- */
-void EXTI1_IRQHandler(void)
-{
-    // KEY0 按下
-    if (__HAL_GPIO_EXTI_GET_IT(GPIO_PIN_1) != 0x00u)
-    {
-        MAZ_Drv_led_set_status(MAZDRV_LED0, MAZDRV_LED_STATUS_TOGGLE);
-        __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_1);
-    }
-}
-
-/**
- * @brief This function handles EXTI line[15:10] interrupts.
- */
-void EXTI15_10_IRQHandler(void)
-{
-    // KEY1 按下
-    if (__HAL_GPIO_EXTI_GET_IT(GPIO_PIN_13) != 0x00u)
-    {
-        MAZ_Drv_led_set_status(MAZDRV_LED1, MAZDRV_LED_STATUS_TOGGLE);
-        __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_13);
-    }
 }
